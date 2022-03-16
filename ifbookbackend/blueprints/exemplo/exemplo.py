@@ -8,6 +8,7 @@ bp = Blueprint("exemplo", __name__, url_prefix="/exemplo", template_folder="temp
 
 @bp.route("/<busca>")
 def root(busca):
+    print("oi oi oi")
     usuario = User.query.filter_by(username=busca).first()
     cursos = ""
     for curso in usuario.cursos:
