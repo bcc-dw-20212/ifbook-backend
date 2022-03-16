@@ -13,6 +13,12 @@ cursos_alunos = db.Table(
     db.Column("curso", db.Integer, db.ForeignKey("curso.id"), primary_key=True),
 )
 
+amizade = db.Table(
+    "amizade",
+    db.Column("primario", db.Integer, db.ForeignKey("user.id"), primary_key=True),
+    db.Column("secundario", db.Integer, db.ForeignKey("user.id"), primary_key=True),
+)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -22,4 +28,12 @@ class User(db.Model):
 
     cursos = db.relationship(
         "Curso", secondary=cursos_alunos, backref=db.backref("users")
+    )
+
+    amigos = db.relationship(
+        "User",
+        secondary=amizade,
+        primaryjoin=amizade.c.secundario == id,
+        secondaryjoin=amizade.c.primario == id,
+        backref="galera",
     )

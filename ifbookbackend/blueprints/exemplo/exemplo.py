@@ -11,9 +11,12 @@ def root(busca):
     usuario = User.query.filter_by(username=busca).first()
     cursos = ""
     for curso in usuario.cursos:
-        print(curso)
         cursos += f"{curso.sigla}, "
-    return f"nome: {usuario.username} <br>Cursos: {cursos}"
+
+    amigos = ""
+    for amigo in usuario.amigos:
+        amigos += f"{amigo.username}, "
+    return f"nome: {usuario.username} <br>Cursos: {cursos}<br>Amigos: {amigos}"
 
 
 @bp.route("/alunosdocurso/<s>")
@@ -62,7 +65,7 @@ def salva(nome, senha, descricao, curso_id):
 
 
 @bp.route("/novocurso/<int:ida>/<int:idb>")
-def amigos(ida, idb):
+def novocurso(ida, idb):
     pessoa = User.query.get(ida)
 
     novocurso = Curso.query.get(idb)
@@ -73,6 +76,19 @@ def amigos(ida, idb):
     db.session.commit()
 
     return "Você tem um novo curso."
+
+
+@bp.route("/amigos/<int:ida>/<int:idb>")
+def amigos(ida, idb):
+    eu = User.query.get(ida)
+    meuAmigo = User.query.get(idb)
+
+    eu.amigos.append(meuAmigo)
+
+    db.session.add(eu)
+    db.session.commit()
+
+    return "São amigos"
 
 
 def init_app(app):
