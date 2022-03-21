@@ -1,4 +1,11 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify, request
+
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+    get_jwt_identity,
+)
 
 from ifbookbackend.ext.database import db
 from ifbookbackend.models import User, Curso
@@ -90,6 +97,33 @@ def amigos(ida, idb):
     db.session.commit()
 
     return "São amigos"
+
+
+@bp.post("/login")
+def login_user():
+    nome = request.form["nome"]
+    senha = request.form["senha"]
+
+    quem = User.query.filter_by(username=nome).first()
+
+    if not quem:
+        return "Usuário não existente", 404
+
+    if quem.senha == senha:
+        token_acesso = create_access_token(identity=quem.username)
+        token_refresh = create_refresh_token(identity=quem.id)
+
+        return jsonify({"access_token": token_acesso, "refresh_token": token_refresh})
+
+    return "Senha não confere", 404
+
+
+@bp.get("/protegida")
+@jwt_required()
+def protegida():
+    usuario = get_jwt_identity()
+    print(usuario)
+    return "usuario", 200
 
 
 def init_app(app):
