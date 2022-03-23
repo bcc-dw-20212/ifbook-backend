@@ -25,7 +25,15 @@ class User(db.Model):
     username = db.Column(db.String(30), unique=True, nullable=False)
     senha = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(1000), default="")
-
+    
+    '''
+    firstname = db.Column(db.String(30), unique=False, nullable=False)
+    lastname = db.Column(db.String(120), unique=False, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    matricula = db.Column(db.String(30), unique=True, nullable=False)
+    telefone = db.Column(db.String(30), unique=True, nullable=True)
+    '''
+    
     cursos = db.relationship(
         "Curso", secondary=cursos_alunos, backref=db.backref("users")
     )
