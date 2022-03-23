@@ -630,12 +630,32 @@ definitions:
         type: "string"
       password:
         type: "string"
+      matricula:
+        type: "integer"
+        format: "int64"
+      cursos:
+        type: "array"
+        xml:
+          name: "curso"
+          wrapped: True
+        items:
+          $ref: "#/definitions/Curso"
       phone:
         type: "string"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
+      amigos:
+        type: "array"
+        xml:
+          name: "amigo"
+          wrapped: True
+        itens:
+          $ref: "#/definitions/User"
+      bloqueios:
+        type: "array"
+        xml:
+          name: "bloqueio"
+          wrapped: True
+        itens:
+          $ref: "#/definitions/User"
     xml:
       name: "User"
   Tag:
