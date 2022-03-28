@@ -123,7 +123,7 @@ def login_user():
 def protegida():
     usuario = get_jwt_identity()
     print(usuario)
-    return "usuario", 200
+    return usuario, 200
 
 
 def init_app(app):
