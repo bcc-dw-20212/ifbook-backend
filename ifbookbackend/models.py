@@ -19,6 +19,12 @@ amizade = db.Table(
     db.Column("secundario", db.Integer, db.ForeignKey("user.id"), primary_key=True),
 )
 
+chat_users = db.Table(
+    "chat_users",
+    db.Column("user", db.Integer, db.ForeignKey("user.id"), primary_key=True),
+    db.Column("chat", db.Integer, db.ForeignKey("chat.id"), primary_key=True),
+)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,4 +42,27 @@ class User(db.Model):
         primaryjoin=amizade.c.secundario == id,
         secondaryjoin=amizade.c.primario == id,
         backref="galera",
+    )
+
+    chats = db.relationship("Chat", secondary=chat_users, backref=db.backref("chats"))
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    texto = db.Column(db.String(200), nullable=False)
+    data = db.Column(db.DateTime(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+
+menssagens_chat = db.Table(
+    "menssagens_chat",
+    db.Column("chat", db.Integer, db.ForeignKey("chat.id"), primary_key=True),
+    db.Column("message", db.Integer, db.ForeignKey("message.id"), primary_key=True),
+)
+
+
+class Chat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    menssagens = db.relationship(
+        "Message", secondary=menssagens_chat, backref=db.backref("chats")
     )
