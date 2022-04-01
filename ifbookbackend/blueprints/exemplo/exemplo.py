@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, jsonify, request, MethodView
+from flask import Blueprint, jsonify, request
 from werkzeug.utils import secure_filename
 
 from ifbookbackend.app import create_app
