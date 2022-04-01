@@ -1,4 +1,8 @@
-from flask import Blueprint, jsonify, request
+import os
+from flask import Blueprint, jsonify, request, MethodView
+from werkzeug.utils import secure_filename
+
+from ifbookbackend.app import create_app
 
 from flask_jwt_extended import (
     create_access_token,
@@ -124,6 +128,30 @@ def protegida():
     usuario = get_jwt_identity()
     print(usuario)
     return usuario, 200
+
+
+@bp.route('/upload', methods=['GET', 'POST'])
+def upload_arquivo():
+    if request.method == 'POST':
+        if 'foto' in request.files:
+            foto = request.files['foto']
+
+            if foto:
+                app = create_app()
+                filename_sanitized = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename_sanitized))
+
+                return "valeu, falou!"
+            else:
+                return "Foto não anexada."
+        else:
+            return "Não havia foto válida na requisição."
+    
+    return render_template('exemplo/upload.html')
+
+
+
+
 
 
 def init_app(app):
