@@ -47,7 +47,10 @@ def runserver(port):
 @click.argument("name")
 def plug_extension(name: str):
     settings = toml.load(os.path.join(os.getcwd(), "instance", "settings.toml"))
-    if f"ifbookbackend.ext.{name}:init_app" in settings["default"]["EXTENSIONS"]:
+    if (
+        f"ifbookbackend.ext.{name}:init_app"
+        in settings["default"]["EXTENSIONS"]
+    ):
         click.echo("An extension with such a name seems to be already plugged.")
         exit(0)
     # project.ext.database
@@ -57,7 +60,9 @@ def plug_extension(name: str):
         ext_template = get_template("ext.pyt")
         new_extension.write(ext_template.render())
 
-    settings["default"]["EXTENSIONS"].append(f"ifbookbackend.ext.{name}:init_app")
+    settings["default"]["EXTENSIONS"].append(
+        f"ifbookbackend.ext.{name}:init_app"
+    )
     with open(os.path.join(os.getcwd(), "instance", "settings.toml"), "w") as f:
         f.write(toml.dumps(settings))
 
@@ -93,12 +98,16 @@ def plug_blueprint(name: str, templates: bool):
         click.echo(f"Placed this blueprint's templates under {tf}")
 
     init = open(
-        os.path.join(os.getcwd(), "ifbookbackend", "blueprints", name, "__init__.py"),
+        os.path.join(
+            os.getcwd(), "ifbookbackend", "blueprints", name, "__init__.py"
+        ),
         "w",
     )
     init.close()
     with open(
-        os.path.join(os.getcwd(), "ifbookbackend", "blueprints", name, f"{name}.py"),
+        os.path.join(
+            os.getcwd(), "ifbookbackend", "blueprints", name, f"{name}.py"
+        ),
         "w",
     ) as blueprint:
         bluet = get_template("blueprint.pyt")
@@ -121,13 +130,18 @@ def plug_database():
     """Adds a basic set of models to project and let it ready for migrations. At the start it will be set to flask_sqlalchemy as ORM and sqlite as database, as well as use flask_migrate as migration tool."""
     # setup tasks
     settings = toml.load(os.path.join(os.getcwd(), "instance", "settings.toml"))
-    if "ifbookbackend.ext.database:init_app" in settings["default"]["EXTENSIONS"]:
+    if (
+        "ifbookbackend.ext.database:init_app"
+        in settings["default"]["EXTENSIONS"]
+    ):
         click.echo("Database seems to be already plugged.")
         exit(0)
 
     # add and install requirements
     with open("requirements.txt", "a") as requirements:
-        requirements.write(f"flask-sqlalchemy{os.linesep}flask-migrate{os.linesep}")
+        requirements.write(
+            f"flask-sqlalchemy{os.linesep}flask-migrate{os.linesep}"
+        )
     cmd = ""
     if os.name == "posix":
         cmd = f'pip install -r {os.path.join(os.getcwd(), "requirements.txt")};'
@@ -149,10 +163,12 @@ def plug_database():
         models_file.write(mod_template.render(project="ifbookbackend"))
     # settings.toml
     settings = toml.load(os.path.join(os.getcwd(), "instance", "settings.toml"))
-    settings["default"]["EXTENSIONS"].append("ifbookbackend.ext.database:init_app")
-    settings["default"]["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(
-        os.getcwd(), "instance", "db.sqlite3"
+    settings["default"]["EXTENSIONS"].append(
+        "ifbookbackend.ext.database:init_app"
     )
+    settings["default"][
+        "SQLALCHEMY_DATABASE_URI"
+    ] = "sqlite:///" + os.path.join(os.getcwd(), "instance", "db.sqlite3")
     with open(os.path.join(os.getcwd(), "instance", "settings.toml"), "w") as f:
         f.write(toml.dumps(settings))
 
@@ -174,7 +190,10 @@ def plug_database():
 @click.argument("message")
 def db_migrate(message):
     settings = toml.load(os.path.join(os.getcwd(), "instance", "settings.toml"))
-    if "ifbookbackend.ext.database:init_app" not in settings["default"]["EXTENSIONS"]:
+    if (
+        "ifbookbackend.ext.database:init_app"
+        not in settings["default"]["EXTENSIONS"]
+    ):
         click.echo("No database plugged.")
         exit(0)
     from flask_migrate import migrate
@@ -188,7 +207,10 @@ def db_migrate(message):
 @manage.command()
 def db_upgrade():
     settings = toml.load(os.path.join(os.getcwd(), "instance", "settings.toml"))
-    if "ifbookbackend.ext.database:init_app" not in settings["default"]["EXTENSIONS"]:
+    if (
+        "ifbookbackend.ext.database:init_app"
+        not in settings["default"]["EXTENSIONS"]
+    ):
         click.echo("No database plugged.")
         exit(0)
     from flask_migrate import upgrade
@@ -202,7 +224,10 @@ def db_upgrade():
 @manage.command()
 def db_downgrade():
     settings = toml.load(os.path.join(os.getcwd(), "instance", "settings.toml"))
-    if "ifbookbackend.ext.database:init_app" not in settings["default"]["EXTENSIONS"]:
+    if (
+        "ifbookbackend.ext.database:init_app"
+        not in settings["default"]["EXTENSIONS"]
+    ):
         click.echo("No database plugged.")
         exit(0)
     from flask_migrate import downgrade

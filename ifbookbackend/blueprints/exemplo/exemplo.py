@@ -14,7 +14,9 @@ from flask_jwt_extended import (
 from ifbookbackend.ext.database import db
 from ifbookbackend.models import User, Curso
 
-bp = Blueprint("exemplo", __name__, url_prefix="/exemplo", template_folder="templates")
+bp = Blueprint(
+    "exemplo", __name__, url_prefix="/exemplo", template_folder="templates"
+)
 
 
 @bp.route("/<busca>")
@@ -68,7 +70,10 @@ def salva(nome, senha, descricao, curso_id):
     if curso_da_pessoa:
         novo.cursos.append(curso_da_pessoa)
     else:
-        return "Da próxima vez vá se cadastrar sem curso na casa da sua avó.", 400
+        return (
+            "Da próxima vez vá se cadastrar sem curso na casa da sua avó.",
+            400,
+        )
 
     db.session.add(novo)
     db.session.commit()
@@ -117,7 +122,9 @@ def login_user():
         token_acesso = create_access_token(identity=quem.username)
         token_refresh = create_refresh_token(identity=quem.id)
 
-        return jsonify({"access_token": token_acesso, "refresh_token": token_refresh})
+        return jsonify(
+            {"access_token": token_acesso, "refresh_token": token_refresh}
+        )
 
     return "Senha não confere", 404
 
@@ -130,28 +137,28 @@ def protegida():
     return usuario, 200
 
 
-@bp.route('/upload', methods=['GET', 'POST'])
+@bp.route("/upload", methods=["GET", "POST"])
 def upload_arquivo():
-    if request.method == 'POST':
-        if 'foto' in request.files:
-            foto = request.files['foto']
+    if request.method == "POST":
+        if "foto" in request.files:
+            foto = request.files["foto"]
 
             if foto:
                 app = create_app()
                 filename_sanitized = secure_filename(foto.filename)
-                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename_sanitized))
+                foto.save(
+                    os.path.join(
+                        app.config["UPLOAD_FOLDER"], filename_sanitized
+                    )
+                )
 
                 return "valeu, falou!"
             else:
                 return "Foto não anexada."
         else:
             return "Não havia foto válida na requisição."
-    
-    return render_template('exemplo/upload.html')
 
-
-
-
+    return render_template("exemplo/upload.html")
 
 
 def init_app(app):

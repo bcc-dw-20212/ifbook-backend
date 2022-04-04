@@ -15,8 +15,12 @@ cursos_alunos = db.Table(
 
 amizade = db.Table(
     "amizade",
-    db.Column("primario", db.Integer, db.ForeignKey("user.id"), primary_key=True),
-    db.Column("secundario", db.Integer, db.ForeignKey("user.id"), primary_key=True),
+    db.Column(
+        "primario", db.Integer, db.ForeignKey("user.id"), primary_key=True
+    ),
+    db.Column(
+        "secundario", db.Integer, db.ForeignKey("user.id"), primary_key=True
+    ),
 )
 
 
