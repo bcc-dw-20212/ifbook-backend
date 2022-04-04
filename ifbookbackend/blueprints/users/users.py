@@ -1,32 +1,23 @@
 import email
 from flask import Blueprint, jsonify, request
-try:
-    from ext.database import db
-    from models import User, Curso
-except ImportError:
-    try:
-        from ifbookbackend.ext.database import db
-        from ifbookbackend.models import User, Curso
-    except ImportError:
-        print('Users.py Import Error')
+from ifbookbackend.ext.database import db
+from ifbookbackend.models import User
 
-bp = Blueprint("users", __name__, url_prefix="/users", template_folder="templates")
+bp_users = Blueprint("users", __name__, url_prefix="/users", template_folder="templates")
 
 
-@bp.get("/aluno")
-def student():
+@bp_users.get("/")
+def student_home():
     return "Welcome!", 200
-    
 
-@bp.post("/novo")
+
+@bp_users.post("/novo")
 def newStudent():
     
     new = User()
     
-    new.username = request.form["nome"]
+    new.username = request.form["username"]
     new.senha = request.form["senha"]
-
-    print(new.username)
 
     if not new.senha or not new.username:
         return "Nome e/ou Senha vazia", 401
@@ -36,17 +27,15 @@ def newStudent():
     if quem :
         return "Username já registrado", 401
 
-    new.descricao = request.form["descricao"]
-    new.firstname = request.form["firstname"]
-    new.lastname = request.form["lastname"]
-    new.email = request.form["email"]
-    new.matricula = request.form["matricula"]
-    new.telefone = request.form["telefone"]
+    new.descricao = request.form.get("descricao")
+    new.firstname = request.form.get("firstname")
+    new.lastname = request.form.get("lastname")
+    new.email = request.form.get("email")
+    new.matricula = request.form.get("matricula")
+    new.telefone = request.form.get("telefone")
 
     db.session.add(new)
     db.session.commit()
 
-    return jsonify({"username": new.username}), 200
+    return jsonify({"firstname": new.firstname}), 200
 
-def init_app(app):
-    app.register_blueprint(bp)
